@@ -1,0 +1,23 @@
+{
+  "name": "tacos",
+  "version": "0.0.1",
+  "description": "TeamCity on Steroids",
+  "main": "app/index.js",
+  "keywords": [
+    "TeamCity"
+  ],
+  "author": "Martin Varga",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^1.3.7"
+  },
+  "devDependencies": {
+    "jasmine": "^2.3.2"
+  },
+  "scripts": {
+    "start": "node app/index.js",
+    "test-init": "jasmine init",
+    "test": "jasmine"
+  }
+}

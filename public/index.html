@@ -1,0 +1,59 @@
+<html ng-app="tacos">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Tacos</title>
+    <link rel="stylesheet" href="lib/angular-material/angular-material.css">
+</head>
+<body layout="column" ng-cloak ng-controller="IndexCtrl as ic" flex>
+<div id="header" layout="row">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" aria-label="Settings">
+                <ng-md-icon icon="menu"></ng-md-icon>
+            </md-button>
+            <h2>
+                <span>TeamCity on Steroids (Tacos)</span>
+            </h2>
+        </div>
+    </md-toolbar>
+</div>
+<div id="main" layout="column" flex>
+    <md-content layout="column" flex>
+        <div id="something" layout-padding>
+            <p>Nothing here yet.</p>
+        </div>
+        <div id="game">
+        </div>
+        <span flex></span>
+        <div id="config">
+            <md-checkbox class="md-primary" ng-model="personal" aria-label="Run as personal build">
+                Run as personal build
+            </md-checkbox>
+        </div>
+        <div id="buttons">
+            <md-button class="md-raised md-primary" ng-click="queueMaster()">Run all tests in master</md-button>
+            <md-button class="md-raised md-primary" ng-click="queueDev()">Run all tests in dev</md-button>
+<!--
+            <md-button class="md-raised md-accent">Accented</md-button>
+            <md-button ng-disabled="true" class="md-raised md-primary">Disabled</md-button>
+            <md-button class="md-raised md-warn">Warn</md-button>
+-->
+        </div>
+    </md-content>
+</div>
+<div id="footer" layout="row">
+    <md-content layout="row" class="md-primary md-hue-3" layout-align="center center" flex>
+        <md-button md-no-ink class="md-primary md-caption">&copy; 2015 PKS, Martin Varga</md-button>
+    </md-content>
+</div>
+
+<script src="lib/angular/angular.js"></script>
+<script src="lib/angular-animate/angular-animate.js"></script>
+<script src="lib/angular-aria/angular-aria.js"></script>
+<script src="lib/angular-material/angular-material.js"></script>
+<script src="lib/angular-material-icons/angular-material-icons.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/index.js"></script>
+
+</body>
+</html>
