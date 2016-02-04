@@ -1,6 +1,0 @@
-{
-  "hostname": "example.com",
-  "port" : 80,
-  "username": "user",
-  "password": "pass"
-}

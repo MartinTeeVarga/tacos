@@ -42,21 +42,45 @@ app.config(function ($mdThemingProvider, $mdIconProvider) {
 });
 
 app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
-    $scope.queueMaster = function () {
-        socket.emit('gui:queue', {branch: "master", personal: $scope.personal});
+    $scope.queue = function () {
+        var settings = {
+            project: $scope.selectedProject,
+            branch: $scope.selectedBranch,
+            personal: $scope.personal
+        };
+        if ($scope.selectedAgent) {
+            settings.agentId = $scope.selectedAgent
+        }
+        socket.emit('gui:queue', settings);
     };
 
-    $scope.queueDev = function () {
-        socket.emit('gui:queue', {branch: "dev", personal: $scope.personal});
+    $scope.getBranches = function () {
+        socket.emit('gui:branches', {project: $scope.selectedProject});
     };
 
     $scope.personal = false;
+    $scope.projects = [];
+    $scope.agents = [];
+    $scope.branches = [];
+    $scope.selectedProject = null;
+    $scope.selectedBranch = null;
+    $scope.selectedAgent = null;
 
-    socket.on('done', function() {
+    socket.on('server:done', function () {
         $mdToast.show(
             $mdToast.simple()
                 .content('Done!')
                 .hideDelay(3000)
         );
+    });
+
+    socket.on('server:projects', function (projects) {
+        $scope.projects = projects;
+    });
+    socket.on('server:agents', function (agents) {
+        $scope.agents = agents;
+    });
+    socket.on('server:branches', function (branches) {
+        $scope.branches = branches;
     });
 });
