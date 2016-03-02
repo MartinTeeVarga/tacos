@@ -1,7 +1,7 @@
 {
   "name": "tacos",
   "version": "0.0.1",
-  "description": "TeamCity on Steroids",
+  "description": "TeamCity Tacos",
   "main": "app/index.js",
   "keywords": [
     "TeamCity"

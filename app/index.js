@@ -28,8 +28,11 @@ function queueAllBuilds(builds, branch, personal, agentId) {
     for (var i = 0; i < builds.length; i++) {
         var id = builds[i].id;
         if (id.indexOf('All') != 0) {
-            console.log("Queueing " + builds[i].name + " as personal? " + personal + " on agent " + agentId);
-            var postData = '<build personal="' + personal + '" branchName="' + branch + '">' +
+            var postData = '<build personal="' + personal + '" ';
+            if (branch) {
+                postData += 'branchName="' + branch + '" ';
+            }
+            postData += '>' +
                 '<buildType id="' + id + '"/>';
 
             if (agentId) {
@@ -37,6 +40,7 @@ function queueAllBuilds(builds, branch, personal, agentId) {
             }
 
             postData += '</build>';
+            console.log("Queueing " + builds[i].name + " as personal? " + personal + " on agent " + agentId + ": " + postData);
 
             // Set up the request
             var queueRequest = new Request('POST', '/httpAuth/app/rest/buildQueue');
@@ -102,14 +106,15 @@ io.on('connection', function (socket) {
     });
 
     socket.on('gui:branches', function (obj) {
+        // TODO get real branches
         socket.emit('server:branches', [
-            {
-                'id': 'dev',
-                'name': 'dev'
-            },
             {
                 'id': 'master',
                 'name': 'master'
+            },
+            {
+                'id': '',
+                'name': '<default>'
             }
         ])
     });

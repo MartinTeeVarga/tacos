@@ -30,10 +30,10 @@ app.factory('socket', function ($rootScope) {
 app.config(function ($mdThemingProvider, $mdIconProvider) {
 //red, pink, purple, deep-purple, indigo, blue, light-blue, cyan, teal, green, light-green, lime, yellow, amber, orange, deep-orange, brown, grey, blue-grey
     $mdThemingProvider.theme('default')
-        .dark()
-        .primaryPalette('orange')
-        .accentPalette('yellow')
-        .warnPalette('deep-orange');
+        //.dark()
+        .primaryPalette('yellow')
+        .accentPalette('green')
+        .warnPalette('red');
     $mdIconProvider
         .iconSet('social', 'webjarimg/icons/sets/social-icons.svg', 24)
         .iconSet('device', 'img/icons/sets/device-icons.svg', 24)
