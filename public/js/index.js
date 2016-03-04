@@ -42,10 +42,24 @@ app.config(function ($mdThemingProvider, $mdIconProvider) {
 });
 
 app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
+
+    $scope.selectAll = function () {
+        $scope.configs.forEach(function (c) {
+            c.selected = true;
+        });
+    };
+
+    $scope.unselectAll = function () {
+        $scope.configs.forEach(function (c) {
+            c.selected = false;
+        });
+    };
+
     $scope.queue = function () {
+        console.log("SELECTED: " + $scope.selectedBranch);
         var settings = {
             project: $scope.selectedProject,
-            branch: $scope.selectedBranch,
+            branch: JSON.parse($scope.selectedBranch), // it's saved as text on the page
             personal: $scope.personal
         };
         if ($scope.selectedAgent) {
@@ -54,8 +68,8 @@ app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
         socket.emit('gui:queue', settings);
     };
 
-    $scope.getBranches = function () {
-        socket.emit('gui:branches', {project: $scope.selectedProject});
+    $scope.getConfigs = function () {
+        socket.emit('gui:configs', {project: $scope.selectedProject});
     };
 
     $scope.personal = false;
@@ -64,6 +78,11 @@ app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
     $scope.branches = [];
     $scope.selectedProject = null;
     $scope.selectedBranch = null;
+    $scope.configs = [];
+    var defaultAgent = {
+        'id': '',
+        'name': 'Any agent'
+    };
     $scope.selectedAgent = null;
 
     socket.on('server:done', function () {
@@ -79,8 +98,13 @@ app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
     });
     socket.on('server:agents', function (agents) {
         $scope.agents = agents;
+        $scope.agents.unshift(defaultAgent);
+        $scope.selectedAgent = defaultAgent.id;
     });
     socket.on('server:branches', function (branches) {
         $scope.branches = branches;
+    });
+    socket.on('server:configs', function (configs) {
+        $scope.configs = configs;
     });
 });

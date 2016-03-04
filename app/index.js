@@ -15,11 +15,11 @@ app.use(express.static('public'));
 var Request = function (method, path) {
     this.host = conf.hostname,
         this.port = conf.port,
-        this.auth = conf.username + ':' + conf.password,
+        this.auth = conf.username + ':' + conf.password;
         this.headers = {
             'Content-type': 'application/xml',
             'Accept': 'application/json'
-        }
+        };
     this.method = method;
     this.path = path;
 };
@@ -29,8 +29,9 @@ function queueAllBuilds(builds, branch, personal, agentId) {
         var id = builds[i].id;
         if (id.indexOf('All') != 0) {
             var postData = '<build personal="' + personal + '" ';
-            if (branch) {
-                postData += 'branchName="' + branch + '" ';
+            console.log(">> " + branch);
+            if (!branch.default) {
+                postData += 'branchName="' + branch.name + '" ';
             }
             postData += '>' +
                 '<buildType id="' + id + '"/>';
@@ -79,6 +80,20 @@ function getProjects(socket) {
     });
 }
 
+function getConfigs(socket, obj) {
+    var request = new Request('GET', '/httpAuth/app/rest/projects/id:' + obj.project + '/buildTypes');
+    execute(request, function (json) {
+        socket.emit('server:configs', json.buildType);
+        json.buildType.forEach(function (build) {
+            var branchesRequest = new Request('GET', '/httpAuth/app/rest/buildTypes/id:' + build.id + "/branches?locator=policy:ACTIVE_HISTORY_AND_ACTIVE_VCS_BRANCHES");
+
+            execute(branchesRequest, function (detailsJson) {
+                socket.emit('server:branches', detailsJson.branch);
+            });
+        });
+    });
+}
+
 function getAgents(socket) {
     var request = new Request('GET', '/httpAuth/app/rest/agents');
     execute(request, function (json) {
@@ -105,18 +120,8 @@ io.on('connection', function (socket) {
         console.log('user disconnected');
     });
 
-    socket.on('gui:branches', function (obj) {
-        // TODO get real branches
-        socket.emit('server:branches', [
-            {
-                'id': 'master',
-                'name': 'master'
-            },
-            {
-                'id': '',
-                'name': '<default>'
-            }
-        ])
+    socket.on('gui:configs', function (obj) {
+        getConfigs(socket, obj);
     });
 
     socket.on('gui:queue', function (obj) {

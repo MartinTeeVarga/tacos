@@ -18,48 +18,63 @@
         </div>
     </md-toolbar>
 </div>
-<div id="main" layout="column" flex>
+<md-content id="main" layout="column" flex>
     <md-content layout="column" flex>
-        <div id="something" layout="row" layout-padding>
-            <md-input-container flex="30">
-                <label>Project</label>
-                <md-select ng-model="selectedProject" ng-change="getBranches()">
-                    <md-option ng-repeat="p in projects" value="{{p.id}}">
-                        {{p.name}}
-                    </md-option>
-                </md-select>
-            </md-input-container>
-            <md-input-container flex="30">
-                <label>Branch</label>
-                <md-select ng-model="selectedBranch">
-                    <md-option ng-repeat="b in branches" value="{{b.id}}">
-                        {{b.name}}
-                    </md-option>
-                </md-select>
-            </md-input-container>
+        <div id="controls" layout="column">
+            <div id="something" layout="row" layout-padding>
+                <md-input-container flex="30">
+                    <label>Project</label>
+                    <md-select ng-model="selectedProject" ng-change="getConfigs()">
+                        <md-option ng-repeat="p in projects" value="{{p.id}}">
+                            {{p.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container flex="30">
+                    <label>Branch</label>
+                    <md-select ng-model="selectedBranch">
+                        <md-option ng-repeat="b in branches" value="{{b}}">
+                            {{b.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
+            <div id="agent" layout-padding layout="row" layout-align="left center">
+                <md-input-container flex="30">
+                    <label>Agent</label>
+                    <md-select ng-model="selectedAgent">
+                        <md-option ng-repeat="a in agents" value="{{a.id}}">
+                            {{a.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
+            <div layout-padding id="config" layout="row">
+                <md-checkbox class="md-primary" ng-model="personal" aria-label="Run as personal build" flex="30">
+                    Run as personal build
+                </md-checkbox>
+            </div>
+
+            <div id="buttons" layout="row" layout-align="left top">
+                <md-button class="md-raised md-primary" ng-click="queue()" ng-disabled="configs.length <  1">Run all tests</md-button>
+                <!--<md-button class="md-raised md-primary" ng-click="selectAll()" ng-disabled="configs.length <  1">Select All</md-button>-->
+                <!--<md-button class="md-raised md-primary" ng-click="unselectAll()" ng-disabled="configs.length < 1">Unselect All</md-button>-->
+
+            </div>
         </div>
 
-        <div id="agent" layout-padding layout="row">
-            <md-input-container flex="30">
-                <label>Agent</label>
-                <md-select ng-model="selectedAgent">
-                    <md-option ng-repeat="a in agents" value="{{a.id}}">
-                        {{a.name}}
-                    </md-option>
-                </md-select>
-            </md-input-container>
-        </div>
+        <md-content layout-padding id="configs" layout="column" flex>
+            <md-list ng-cloak>
+                <md-list-item ng-repeat="c in configs">
+                    <!--<md-checkbox ng-model="c.selected"></md-checkbox>-->
+                    <p>{{ c.name }}</p>
+                </md-list-item>
+            </md-list>
+        </md-content>
 
-        <div layout-padding id="config" layout="row">
-            <md-checkbox class="md-primary" ng-model="personal" aria-label="Run as personal build" flex="30">
-                Run as personal build
-            </md-checkbox>
-        </div>
 
-        <span flex></span>
-        <div id="buttons">
-            <md-button class="md-raised md-primary" ng-click="queue()">Run all tests</md-button>
-        </div>
     </md-content>
 </div>
 <div id="footer" layout="row">
