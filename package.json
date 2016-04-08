@@ -15,11 +15,14 @@
   },
   "devDependencies": {
     "jasmine": "^2.4.1",
-    "json-server": "^0.8.9"
+    "json-server": "^0.8.9",
+    "mock-fs": "^3.8.0",
+    "watch": "latest"
   },
   "scripts": {
     "start": "node app/index.js",
     "test-init": "jasmine init",
-    "test": "jasmine"
+    "test": "jasmine",
+    "watch:test": "watch \"npm run test\" spec app"
   }
 }

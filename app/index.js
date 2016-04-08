@@ -13,19 +13,7 @@ var io = require('socket.io')(server);
 
 app.use(express.static('public'));
 
-function execute(request, callback) {
-    http.request(request, function (response) {
-        response.setEncoding('utf8');
-        var body = '';
-        response.on('data', function (chunk) {
-            body += chunk;
-        });
-        response.on('end', function () {
-            var json = JSON.parse(body);
-            callback(json);
-        });
-    }).end();
-}
+
 
 function queueAllBuilds(builds, branch, personal, agentId) {
     for (var i = 0; i < builds.length; i++) {
