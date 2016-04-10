@@ -24,7 +24,7 @@
             <div id="something" layout="row" layout-padding>
                 <md-input-container flex="30">
                     <label>Project</label>
-                    <md-select ng-model="selectedProject" ng-change="getConfigs()">
+                    <md-select ng-model="selectedProject" ng-change="getBuilds()">
                         <md-option ng-repeat="p in projects" value="{{p.id}}">
                             {{p.name}}
                         </md-option>
@@ -58,24 +58,28 @@
             </div>
 
             <div id="buttons" layout="row" layout-align="left top">
-                <md-button class="md-raised md-primary" ng-click="queue()" ng-disabled="configs.length <  1">Run all tests</md-button>
+                <md-button class="md-raised md-primary" ng-click="queue()" ng-disabled="builds.length <  1">Run all
+                    tests
+                </md-button>
                 <!--<md-button class="md-raised md-primary" ng-click="selectAll()" ng-disabled="configs.length <  1">Select All</md-button>-->
                 <!--<md-button class="md-raised md-primary" ng-click="unselectAll()" ng-disabled="configs.length < 1">Unselect All</md-button>-->
 
             </div>
         </div>
 
-        <md-content layout-padding id="configs" layout="column" flex>
+        <md-content layout-padding id="builds" layout="column" flex>
             <md-list ng-cloak>
-                <md-list-item ng-repeat="c in configs">
+                <md-list-item ng-repeat="b in builds">
                     <!--<md-checkbox ng-model="c.selected"></md-checkbox>-->
-                    <p>{{ c.name }}</p>
+                    <p>{{ b.name }}</p>
                 </md-list-item>
             </md-list>
         </md-content>
 
 
     </md-content>
+</md-content>
+
 </div>
 <div id="footer" layout="row">
     <md-content layout="row" class="md-primary" layout-align="center center" flex>

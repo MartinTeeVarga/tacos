@@ -11,11 +11,11 @@
   "repository": "https://github.com/sm4/tacos",
   "dependencies": {
     "express": "^4.13.3",
+    "lodash": "^4.9.0",
     "socket.io": "^1.3.7"
   },
   "devDependencies": {
     "jasmine": "^2.4.1",
-    "mock-fs": "^3.8.0",
     "mock-socket": "^2.0.0",
     "nock": "^8.0.0",
     "watch": "latest"

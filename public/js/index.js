@@ -44,32 +44,31 @@ app.config(function ($mdThemingProvider, $mdIconProvider) {
 app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
 
     $scope.selectAll = function () {
-        $scope.configs.forEach(function (c) {
+        $scope.builds.forEach(function (c) {
             c.selected = true;
         });
     };
 
     $scope.unselectAll = function () {
-        $scope.configs.forEach(function (c) {
+        $scope.builds.forEach(function (c) {
             c.selected = false;
         });
     };
 
     $scope.queue = function () {
-        console.log("SELECTED: " + $scope.selectedBranch);
-        var settings = {
+        var parameters = {
             project: $scope.selectedProject,
             branch: JSON.parse($scope.selectedBranch), // it's saved as text on the page
             personal: $scope.personal
         };
         if ($scope.selectedAgent) {
-            settings.agentId = $scope.selectedAgent
+            parameters.agentId = $scope.selectedAgent
         }
-        socket.emit('gui:queue', settings);
+        socket.emit('gui:queue', {"builds": $scope.builds, "parameters": parameters});
     };
 
-    $scope.getConfigs = function () {
-        socket.emit('gui:configs', {project: $scope.selectedProject});
+    $scope.getBuilds = function () {
+        socket.emit('gui:builds', {projectId: $scope.selectedProject});
     };
 
     $scope.personal = false;
@@ -78,7 +77,7 @@ app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
     $scope.branches = [];
     $scope.selectedProject = null;
     $scope.selectedBranch = null;
-    $scope.configs = [];
+    $scope.builds = [];
     var defaultAgent = {
         'id': '',
         'name': 'Any agent'
@@ -96,15 +95,18 @@ app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
     socket.on('server:projects', function (projects) {
         $scope.projects = projects;
     });
+
     socket.on('server:agents', function (agents) {
         $scope.agents = agents;
         $scope.agents.unshift(defaultAgent);
         $scope.selectedAgent = defaultAgent.id;
     });
+
     socket.on('server:branches', function (branches) {
         $scope.branches = branches;
     });
-    socket.on('server:configs', function (configs) {
-        $scope.configs = configs;
+
+    socket.on('server:builds', function (builds) {
+        $scope.builds = builds;
     });
 });
