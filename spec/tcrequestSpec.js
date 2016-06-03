@@ -7,7 +7,6 @@ GLOBAL.taconf = {
     "password": "pass"
 };
 
-var mockfs = require('mock-fs');
 var tcrequest = require('../app/tcrequest');
 var nock = require('nock');
 
