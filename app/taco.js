@@ -36,13 +36,15 @@ module.exports.getBuilds = function(socket, projectId) {
     var request = tc.create('GET', '/httpAuth/app/rest/projects/id:' + projectId + '/buildTypes');
     request.execute(function (result) {
         var buildTypes = result.data.buildType;
-        socket.emit("server:builds", buildTypes);
         var branches = [];
         var gotBranches = _.after(buildTypes.length, function() {
             branches = _.uniqBy(branches, function (b) {
                 return b.name;
             });
-            socket.emit('server:branches', branches);
+            socket.emit("server:builds", {
+                'builds': buildTypes,
+                'branches': branches
+            });
         });
         for (var i = 0; i < buildTypes.length; i++) {
             var branchRequest = tc.create("GET", '/httpAuth/app/rest/buildTypes/id:' + buildTypes[i].id + '/branches?locator=policy:ACTIVE_HISTORY_AND_ACTIVE_VCS_BRANCHES');
@@ -55,7 +57,8 @@ module.exports.getBuilds = function(socket, projectId) {
 };
 
 module.exports.queue = function (socket, builds, parameters) {
-    console.log("DO");
+    var counter = 0;
+
     for (var i = 0; i < builds.length; i++) {
         console.log("NOW: ");
         var id = builds[i].id;
@@ -69,6 +72,10 @@ module.exports.queue = function (socket, builds, parameters) {
             queueRequest.execute(function (queueResponse) {
                 if (queueResponse.status == 200) {
                     socket.emit('server:queued', immutable);
+                    counter++;
+                    if (counter >= builds.length) {
+                        socket.emit('server:done');
+                    }
                 } else {
                     socket.emit('server:error', "queue");
                 }

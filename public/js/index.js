@@ -1,6 +1,3 @@
-/**
- * Created by Martin Varga on 21/10/2015.
- */
 var app = angular.module('tacos', ['ngMaterial', 'ngMdIcons']);
 
 app.factory('socket', function ($rootScope) {
@@ -41,33 +38,53 @@ app.config(function ($mdThemingProvider, $mdIconProvider) {
         .defaultIconSet('img/icons/sets/core-icons.svg', 24);
 });
 
-app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
+app.controller('IndexCtrl', function ($scope, $mdToast, $filter, socket) {
+
+    $scope.isLoading = true;
+
+    $scope.isSomethingSelected = function () {
+        function isSelected(b) {
+            return b.selected;
+        }
+
+        return $scope.builds.some(isSelected);
+    };
 
     $scope.selectAll = function () {
-        $scope.builds.forEach(function (c) {
+        var filtered = $filter('filter')($scope.builds, $scope.filterText);
+        filtered.forEach(function (c) {
             c.selected = true;
         });
     };
 
     $scope.unselectAll = function () {
-        $scope.builds.forEach(function (c) {
+        var filtered = $filter('filter')($scope.builds, $scope.filterText);
+        filtered.forEach(function (c) {
             c.selected = false;
         });
     };
 
     $scope.queue = function () {
+        function isSelected(b) {
+            return b.selected;
+        }
+
+        var filtered = $scope.builds.filter(isSelected);
+        $scope.isLoading = true;
+
         var parameters = {
             project: $scope.selectedProject,
-            branch: JSON.parse($scope.selectedBranch), // it's saved as text on the page
+            branch: $scope.selectedBranch,
             personal: $scope.personal
         };
         if ($scope.selectedAgent) {
             parameters.agentId = $scope.selectedAgent
         }
-        socket.emit('gui:queue', {"builds": $scope.builds, "parameters": parameters});
+        socket.emit('gui:queue', {"builds": filtered, "parameters": parameters});
     };
 
     $scope.getBuilds = function () {
+        $scope.isLoading = true;
         socket.emit('gui:builds', {projectId: $scope.selectedProject});
     };
 
@@ -90,23 +107,37 @@ app.controller('IndexCtrl', function ($scope, $mdToast, socket) {
                 .content('Done!')
                 .hideDelay(3000)
         );
+        $scope.isLoading = false;
+    });
+
+    socket.on('server:error', function (name) {
+        $mdToast.show(
+            $mdToast.simple()
+                .content("Error queueing" + name)
+                .hideDelay(5000)
+        );
+        $scope.isLoading = false;
     });
 
     socket.on('server:projects', function (projects) {
         $scope.projects = projects;
+        $scope.isLoading = false;
     });
 
     socket.on('server:agents', function (agents) {
         $scope.agents = agents;
         $scope.agents.unshift(defaultAgent);
         $scope.selectedAgent = defaultAgent.id;
+        $scope.isLoading = false;
     });
 
-    socket.on('server:branches', function (branches) {
-        $scope.branches = branches;
-    });
-
-    socket.on('server:builds', function (builds) {
-        $scope.builds = builds;
+    socket.on('server:builds', function (data) {
+        $scope.builds = data.builds;
+        $scope.branches = data.branches;
+        $scope.selectedBranch = $scope.branches.find(function (b) {
+            return b.default;
+        });
+        $scope.selectAll();
+        $scope.isLoading = false;
     });
 });
